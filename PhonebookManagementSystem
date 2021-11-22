@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct node {
+    int contact;
+    char name[25];
+    char gmail[25];
+    struct node *next, *prev;
+};
+
+void insert(struct node **head){
+    int contact;
+    char name[25];
+    char gmail[25];
+    printf("\nContact name: ");
+    scanf("%s",name);
+    printf("\nPhone number: ");
+    scanf("%d",&contact);
+    if (contact<999999999 || contact>10000000000){
+        printf("\nInvalid contact number");
+        return;
+    }
+    printf("\nEmail: ");
+    scanf("%s",gmail);
+    struct node *newnode;
+    newnode = (struct node *)malloc(sizeof(struct node));
+    newnode->contact = contact;
+    newnode->next = NULL;
+    strcpy(newnode->name,name);
+    strcpy(newnode->gmail,gmail);
+    if (*head == NULL){
+        newnode->prev = NULL;
+        *head = newnode;
+        return;
+    }
+    struct node *temp;
+    temp = *head;
+    while(temp->next!=NULL){
+        temp = temp->next;
+    }
+    temp->next = newnode;
+    newnode->prev = temp;
+}
+
+void display(struct node *head){
+    printf("\nPhone book details:\n");
+    printf("\nName\t\t\tPhone number\t\tEmail\n");
+    printf("\n-----------------------------------------------------------------------\n");
+    while(head!=NULL){
+        printf("%s\t\t\t",head->name);
+        printf("%d\t\t",head->contact);
+        printf("%s\n",head->gmail);
+        head = head->next;
+    }
+}
+
+void sort(struct node **head){
+    struct node *current,*temp;
+    current = *head;
+    int p;
+    char n[25],g[25];
+    while (current->next!=NULL){
+        temp = current->next;
+        while(temp!=NULL){
+            if (strcmp(current->name,temp->name)>0){
+                strcpy(n,current->name);
+                strcpy(g,current->gmail);
+                p = current->contact;
+                strcpy(current->name,temp->name);
+                strcpy(current->gmail,temp->gmail);
+                current->contact = temp->contact;
+                temp->contact = p;
+                strcpy(temp->name,n);
+                strcpy(temp->gmail,g);
+            }
+            temp = temp->next;
+        }
+        current = current->next;
+    }
+
+}
+
+void del(struct node **head){
+
+    char s[25];
+    printf("Enter name to be deleted: ");
+    scanf("%s",&s);
+    struct node *temp;
+    temp = *head;
+    while(temp!=NULL){
+        if (strcmp(s,temp->name) == 0){
+            if (temp == *head){
+                *head = (*head)->next;
+                (*head)->prev = NULL;
+                return;
+            }
+            else{
+                temp->prev->next = temp->next;
+                temp->next->prev = temp->prev;
+                return;
+            }
+        }
+        temp = temp->next;
+    }
+}
+
+void search_by_name(struct node *head){
+    char name[25];
+    printf("Enter name to be searched: ");
+    scanf("%s",&name);
+    while (head!=NULL){
+        if (strcmp(name,head->name) == 0){
+            printf("\nName: %s",head->name);
+            printf("\nPhone number: %d",head->contact);
+            printf("\nEmail: %s",head->gmail);
+            return;
+        }
+        head = head->next;
+    }
+    printf("Not Found");
+}
+
+void search_by_email(struct node *head){
+    char email[25];
+    printf("Enter email to be searched: ");
+    scanf("%s",&email);
+    while (head!=NULL){
+        if (strcmp(head->gmail,email) == 0){
+            printf("\nName: %s",head->name);
+            printf("\nPhone number: %d",head->contact);
+            printf("\nEmail: %s",head->gmail);
+            return;
+        }
+        head = head->next;
+    }
+    printf("Not Found");
+}
+
+void search_by_phone(struct node *head){
+    int phone;
+    printf("Enter phone number to be searched: ");
+    scanf("%d",&phone);
+    while (head!=NULL){
+        if (phone == head->contact){
+            printf("\nName: %s",head->name);
+            printf("\nPhone number: %d",head->contact);
+            printf("\nEmail: %s",head->gmail);
+            return;
+        }
+        head = head->next;
+    }
+    printf("Not Found");
+}
+
+void update_name(struct node **head){
+    char old_name[25],new_name[25];
+    printf("Enter the current name to be updated: ");
+    scanf("%s",&old_name);
+    printf("Enter the new name: ");
+    scanf("%s",&new_name);
+    struct node *temp;
+    temp = *head;
+    while(temp!=NULL){
+        if (strcmp(temp->name,old_name) == 0){
+            strcpy(temp->name,new_name);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("\nThe name does not exist");
+}
+
+void update_email(struct node **head){
+    char old_email[25],new_email[25];
+    printf("Enter the current email to be updated: ");
+    scanf("%s",&old_email);
+    printf("Enter the new email: ");
+    scanf("%s",&new_email);
+    struct node *temp;
+    temp = *head;
+    while(temp!=NULL){
+        if (strcmp(temp->gmail,old_email) == 0){
+            strcpy(temp->gmail,new_email);
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("\nThe email does not exist");
+}
+
+void update_phone(struct node **head){
+    int old_phone,new_phone;
+    printf("Enter the current phone number to be updated: ");
+    scanf("%d",&old_phone);
+    printf("Enter the new phone number: ");
+    scanf("%d",&new_phone);
+    struct node *temp;
+    temp = *head;
+    while(temp!=NULL){
+        if (temp->contact == old_phone){
+            temp->contact = new_phone;
+            return;
+        }
+        temp = temp->next;
+    }
+    printf("\nThe phone number does not exist");
+}
+
+void main()
+{
+    struct node *head;
+    head = NULL;
+    int x,p;
+    char name[25],e[25];
+
+    while(1){
+        printf("\n\n-------------Menu------------------");
+        printf("\n1. Add Contact");
+        printf("\n2. Delete Contact");
+        printf("\n3. Update Contact name");
+        printf("\n4. Update Contact phone number");
+        printf("\n5. Update Contact email");
+        printf("\n6. Search contact details by name");
+        printf("\n7. Search contact details by phone");
+        printf("\n8. Search contact details by email");
+        printf("\n9. Display contact details");
+        printf("\n10. Exit");
+        printf("\nChoose an option: ");
+        scanf("%d",&x);
+
+        switch (x)
+        {
+        case 1:
+            insert(&head);
+            break;
+        case 2:
+            del(&head);
+            break;
+        case 3:
+            update_name(&head);
+            break;
+        case 4:
+            update_phone(&head);
+            break;
+        case 5:
+            update_email(&head);
+            break;
+        case 6:
+            search_by_name(head);
+            break;
+        case 7:
+            search_by_phone(head);
+            break;
+        case 8:
+            search_by_email(head);
+            break;
+        case 9:
+            sort(&head);
+            display(head);
+            break;
+        case 10:
+            exit(1);
+        default:
+            printf("\nInvalid choice.");
+        }
+    }
+
+
+
+}
